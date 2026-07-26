@@ -1,0 +1,7 @@
+# Build directories
+build/
+.west/
+modules/
+tools
+zephyr/
+bootloader/
