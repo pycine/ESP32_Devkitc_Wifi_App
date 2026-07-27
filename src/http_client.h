@@ -18,4 +18,11 @@
 int http_get(const char *host, const char *port, const char *path,
              uint8_t *resp_buf, size_t resp_buf_len);
 
+/* New POST function */
+int http_post(const char *host, const char *port, const char *path,
+              const char *content_type, const char *body,
+              uint8_t *resp_buf, size_t resp_buf_len);
+
 #endif /* HTTP_CLIENT_H */
+
+
