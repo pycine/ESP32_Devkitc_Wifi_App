@@ -4,7 +4,7 @@
 #include "wifi.h"
 #include "http_client.h"
 #include "storage.h"
-
+#include "rfid.h"
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 /* API Endpoints */
@@ -97,7 +97,30 @@ int main(void)
     } else {
         LOG_INF("Data sent successfully!");
     }
+if (rfid_init() != 0) {
+        LOG_ERR("Failed to initialize MFRC522");
+    } else {
+        LOG_INF("MFRC522 RFID Reader Ready!");
+    }
 
+    /* Loop to scan RFID tags */
+    rfid_uid_t uid;
+    while (1) {
+        if (rfid_is_new_card_present() && rfid_read_card_serial(&uid)) {
+            char uid_str[32] = {0};
+            char tmp[4];
+
+            for (uint8_t i = 0; i < uid.size; i++) {
+                snprintf(tmp, sizeof(tmp), "%02X", uid.uidByte[i]);
+                strcat(uid_str, tmp);
+            }
+
+            LOG_INF("Card Scanned! UID: %s", uid_str);
+        }
+        k_msleep(250);
+    }
+
+    return 0;
     LOG_INF("Application finished.");
     return 0;
 }

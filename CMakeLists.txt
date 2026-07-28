@@ -8,4 +8,5 @@ target_sources(app PRIVATE
     src/wifi.c
     src/http_client.c
     src/storage.c
+    src/rfid.c
     )
