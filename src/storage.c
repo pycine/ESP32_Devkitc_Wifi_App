@@ -62,3 +62,21 @@ int storage_load(const char *filename, void *data, size_t len)
 
     return ret; 
 }
+
+
+int storage_save_u64(const char *filename, uint64_t value) {
+    char buf[32];
+    snprintk(buf, sizeof(buf), "%llu", value);
+    return storage_save(filename, buf, strlen(buf));
+}
+
+int storage_load_u64(const char *filename, uint64_t *value) {
+    char buf[32];
+    int ret = storage_load(filename, buf, sizeof(buf) - 1);
+    if (ret > 0) {
+        buf[ret] = '\0';
+        *value = strtoull(buf, NULL, 10);
+        return 0;
+    }
+    return ret;  // negative on error
+}

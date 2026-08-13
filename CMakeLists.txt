@@ -9,4 +9,5 @@ target_sources(app PRIVATE
     src/http_client.c
     src/storage.c
     src/rfid.c
+    src/employee_sync.c
     )

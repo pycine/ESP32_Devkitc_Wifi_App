@@ -5,6 +5,8 @@
 #include "http_client.h"
 #include "storage.h"
 #include "rfid.h"
+#include "employee_sync.h"
+
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 /* API Endpoints */
@@ -38,7 +40,11 @@ int main(void)
     LOG_INF("Storage mounted successfully.");
 
     /* 2. Check flash for data from the LAST boot */
+  /*  uint64_t last_sync = 0;
+    storage_load_u64("last_sync.txt", &last_sync);
+    LOG_INF("Last sync: %llu", last_sync);
     memset(saved_data, 0, sizeof(saved_data));
+    */
     ret = storage_load(DATA_FILE, saved_data, sizeof(saved_data) - 1);
     
     if (ret > 0) {
@@ -57,7 +63,9 @@ int main(void)
     }
 
     k_sleep(K_MSEC(500));
-    
+    if (employees_sync() < 0) {
+    LOG_WRN("Employee sync failed, using stale local cache");
+}
 
     /* 4. Fetch FRESH data from the API */
     LOG_INF("Fetching fresh data from API...");
@@ -115,7 +123,12 @@ if (rfid_init() != 0) {
                 strcat(uid_str, tmp);
             }
 
-            LOG_INF("Card Scanned! UID: %s", uid_str);
+            if (employees_is_authorized(uid_str)) {
+                LOG_INF("Access granted: %s", uid_str);
+                }
+            else {
+            LOG_WRN("Access denied: %s", uid_str);
+                }
         }
         k_msleep(250);
     }

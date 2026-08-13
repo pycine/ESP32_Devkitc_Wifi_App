@@ -27,5 +27,6 @@
         compatible = "vnd,spi-device";
         reg = <0>;
         spi-max-frequency = <1000000>; /* Lower to 1 MHz for reliability */
+        
     };
 };
