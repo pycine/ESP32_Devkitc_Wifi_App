@@ -2,12 +2,7 @@ cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(wifi_app)
+file(GLOB APP_SOURCES "src/*.c")
 
-target_sources(app PRIVATE 
-    src/main.c
-    src/wifi.c
-    src/http_client.c
-    src/storage.c
-    src/rfid.c
-    src/employee_sync.c
-    )
+target_sources(app PRIVATE ${APP_SOURCES})
+

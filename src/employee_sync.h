@@ -23,6 +23,8 @@
  *         whitelist and sync cursor are left untouched.
  */
 int employees_sync(void);
+void employees_sync_start_periodic(uint32_t interval_sec);
+
 
 /**
  * Check whether a scanned RFID UID is currently authorized.

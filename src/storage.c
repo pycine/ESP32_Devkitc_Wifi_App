@@ -39,6 +39,20 @@ int storage_save(const char *filename, const void *data, size_t len)
     ret = fs_open(&file, path, FS_O_CREATE | FS_O_WRITE);
     if (ret < 0) return ret;
 
+    /* FS_O_WRITE does NOT truncate the file — it only lets you overwrite
+     * bytes from the start. If this save is SHORTER than whatever was
+     * written here last time, the old trailing bytes stay on disk past
+     * the new content. On the next boot, storage_load() reads that
+     * leftover data right along with the real content (e.g. a stale
+     * whitelist line for an employee who was just deleted). Explicitly
+     * truncating to 0 here guarantees the file on disk is exactly what
+     * we're about to write, nothing more. */
+    ret = fs_truncate(&file, 0);
+    if (ret < 0) {
+        fs_close(&file);
+        return ret;
+    }
+
     ret = fs_write(&file, data, len);
     fs_close(&file);
 
